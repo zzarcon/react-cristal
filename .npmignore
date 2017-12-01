@@ -1,0 +1,5 @@
+__tests__
+example
+.travis.yml
+tsconfig.json
+webpack.config.js
