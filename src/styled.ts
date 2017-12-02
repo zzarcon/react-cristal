@@ -5,9 +5,11 @@ export interface WrapperProps {
 }
 
 const wrapperStyles = ({isDragging}: WrapperProps) => {
-  console.log('wrapperStyles', isDragging)
   if (isDragging) {
-    return `opacity: 0;`;
+    return `
+      background-color: lightblue;
+      user-select: none;
+    `;
   }
 
   return `opacity: 1;`;
@@ -17,6 +19,12 @@ export const Wrapper = styled.div`
   ${wrapperStyles}
   position: fixed;
   display: inline-flex;
+  flex-direction: column;
   border: 1px solid black;
-  padding: 10px;
+`;
+
+export const Header = styled.div`
+  height: 30px;
+  border-bottom: 1px solid black;
+  cursor: -webkit-grab;
 `;

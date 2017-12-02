@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {Component} from 'react';
-import {Wrapper} from './styled';
+import {Wrapper, Header} from './styled';
 
 export interface CristalProps {
 
@@ -14,57 +14,65 @@ export interface CristalState {
 
 class Cristal extends Component<CristalProps, CristalState> {
   wrapperElement: Element;
+  headerElement: Element;
 
   state: CristalState = {
+    x: 1,
+    y: 1,
     isDragging: false
+  }
+
+  componentDidMount() {
+    document.addEventListener('mousemove', this.onMouseMove);
+    document.addEventListener('mouseup', this.onMouseUp);
   }
 
   onDragStart = () => {
     console.log('start')
   }
 
-  componentDidMount() {
-    document.addEventListener('drag', (e) => {
-
-    }, false);
-
-    document.addEventListener('dragstart', (e) => {
-      const img = new Image();
-      const {dataTransfer} = e;
-      console.log(dataTransfer.effectAllowed)
-      dataTransfer.effectAllowed = 'move';
-      dataTransfer.setData('text/html', '');
-      e.dataTransfer.setDragImage(img, 0, 0);
-      this.setState({
-        isDragging: true
-      });
-    }, false);
-
-    document.addEventListener('dragover', (e) => {
-      // this.setState({
-      //   isDragging: true,
-      //   // x: event.clientX,
-      //   // y: event.clientY
-      // });
-      // debugger
-      // console.log(event.clientX, event.clientY)
-      // console.log(event.target)
-      // console.log('over', this.wrapperElement)
-      // prevent default to allow drop
-      e.preventDefault();
-    }, false);
-
-    document.addEventListener('dragend', (e) => {
-      this.setState({
-        isDragging: false,
-        x: e.clientX,
-        y: e.clientY
-      });
-    }, false);
-  }
-
   saveWrapperRef = (el: Element) => {
     this.wrapperElement = el;
+  }
+
+  saveHeaderRef = (el: Element) => {
+    this.headerElement = el;
+    // this.headerDimensions = el.getBoundingClientRect();
+  }
+
+  onMouseDown = () => {
+    this.setState({
+      isDragging: true
+    })
+    console.log('onMouseDown')
+  }
+
+  onMouseMove = (e: MouseEvent) => {
+    const {isDragging, x, y} = this.state;
+    if (!isDragging) return;
+
+    const {movementX, movementY} = e;
+    // TODO: Find better place to 'getBoundingClientRect'
+    const {width} = this.headerElement.getBoundingClientRect();
+    const newX = x + movementX;
+    const newY = y + movementY;
+
+    this.setState({
+      x: Math.max(newX, 0),
+      y: Math.max(newY, 0)
+    });
+  }
+
+  onMouseLeave = () => {
+    this.setState({
+      isDragging: false
+    });
+  }
+
+  onMouseUp = () => {
+    this.setState({
+      isDragging: false
+    });
   }
 
   render() {
@@ -73,16 +81,18 @@ class Cristal extends Component<CristalProps, CristalState> {
     const style = {
       transform: `translate(${x}px, ${y}px)`
     };
-    console.log(style);
 
     return (
       <Wrapper 
-        _style={style}
+        style={style}
         innerRef={this.saveWrapperRef}
-        onDragStart={this.onDragStart}
         isDragging={isDragging}
-        draggable
       >
+        <Header
+          innerRef={this.saveHeaderRef}
+          onMouseDown={this.onMouseDown}
+        >
+        </Header>
         {children}
       </Wrapper>
     );
