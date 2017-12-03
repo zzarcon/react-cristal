@@ -1,25 +1,30 @@
 import * as React from 'react';
+import * as ReactDOM from 'react-dom';
 import {Component} from 'react';
-import {Wrapper, Header} from './styled';
+import {Wrapper, Header, ResizeHandle} from './styled';
 
 export interface CristalProps {
-
+  header?: JSX.Element;
 }
 
 export interface CristalState {
   x: number;
   y: number;
   isDragging: boolean;
+  isResizing: boolean;
+  width?: number;
+  height?: number;
 }
 
 class Cristal extends Component<CristalProps, CristalState> {
-  wrapperElement: Element;
   headerElement: Element;
+  childrenElement: Element;
 
   state: CristalState = {
     x: 1,
     y: 1,
-    isDragging: false
+    isDragging: false,
+    isResizing: false
   }
 
   componentDidMount() {
@@ -27,66 +32,94 @@ class Cristal extends Component<CristalProps, CristalState> {
     document.addEventListener('mouseup', this.onMouseUp);
   }
 
-  onDragStart = () => {
-    console.log('start')
+  componentWillUnmount() {
+    document.removeEventListener('mousemove', this.onMouseMove);
+    document.removeEventListener('mouseup', this.onMouseUp);
   }
 
   saveWrapperRef = (el: Element) => {
-    this.wrapperElement = el;
+    // TODO: Find more robust way of getting the children
+    this.childrenElement = el.children[1];
+    this.setInitialDimensions();
+  }
+
+  setInitialDimensions() {
+    const {width, height} = this.childrenElement.getBoundingClientRect();
+
+    this.setState({
+      width,
+      height 
+    });
   }
 
   saveHeaderRef = (el: Element) => {
     this.headerElement = el;
-    // this.headerDimensions = el.getBoundingClientRect();
   }
 
   onMouseDown = () => {
     this.setState({
       isDragging: true
-    })
-    console.log('onMouseDown')
+    });
   }
 
   onMouseMove = (e: MouseEvent) => {
-    const {isDragging, x, y} = this.state;
-    if (!isDragging) return;
-
+    const {isDragging, isResizing} = this.state;
     const {movementX, movementY} = e;
-    // TODO: Find better place to 'getBoundingClientRect'
-    const {width} = this.headerElement.getBoundingClientRect();
-    const newX = x + movementX;
-    const newY = y + movementY;
 
-    this.setState({
-      x: Math.max(newX, 0),
-      y: Math.max(newY, 0)
-    });
-  }
+    if (isDragging) {
+      const {x, y} = this.state;
+      // TODO: Find better place to 'getBoundingClientRect'
+      const {width} = this.headerElement.getBoundingClientRect();
+      const newX = x + movementX;
+      const newY = y + movementY;
 
-  onMouseLeave = () => {
-    this.setState({
-      isDragging: false
-    });
+      this.setState({
+        x: Math.max(newX, 0),
+        y: Math.max(newY, 0)
+      });
+      return;
+    }
+
+    if (isResizing) {
+      const {width, height} = this.state;
+      const newWidth = width + movementX;
+      const newHeight = height + movementY;
+
+      this.setState({
+        width: newWidth,
+        height: newHeight
+      });
+    }
   }
 
   onMouseUp = () => {
     this.setState({
-      isDragging: false
+      isDragging: false,
+      isResizing: false
+    });
+  }
+
+  onResizeStart = () => {
+    this.setState({
+      isResizing: true
     });
   }
 
   render() {
     const {children} = this.props;
-    const {x, y, isDragging} = this.state;
+    const {x, y, width, height, isDragging, isResizing} = this.state;
+    const isActive = isDragging || isResizing;
     const style = {
-      transform: `translate(${x}px, ${y}px)`
+      transform: `translate(${x}px, ${y}px)`,
+      width, 
+      height
     };
 
-    return (
-      <Wrapper 
+    return ReactDOM.createPortal(
+      <Wrapper
         style={style}
         innerRef={this.saveWrapperRef}
-        isDragging={isDragging}
+        isActive={isActive}
       >
         <Header
           innerRef={this.saveHeaderRef}
@@ -94,7 +127,11 @@ class Cristal extends Component<CristalProps, CristalState> {
         >
         </Header>
         {children}
-      </Wrapper>
+        <ResizeHandle
+          onMouseDown={this.onResizeStart}
+        />
+      </Wrapper>,
+      document.body
     );
   }
 }

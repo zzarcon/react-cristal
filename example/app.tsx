@@ -7,7 +7,9 @@ export default class App extends Component {
   render() {
     return (
       <Cristal>
-        <ComponentWrapper>Hector</ComponentWrapper>
+        <ComponentWrapper>
+          Hector
+        </ComponentWrapper>
       </Cristal>
     );
   }
