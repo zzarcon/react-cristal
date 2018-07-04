@@ -1,13 +1,11 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
-import {Component} from 'react';
-import CristalHeader from './header';
-import CristalContent from './content';
+import {Component, ReactNode} from 'react';
 
-import {Wrapper, Header, ResizeHandle} from './styled';
+import {Wrapper, Header, ResizeHandle, ContentWrapper} from './styled';
 
 export interface CristalProps {
-  children?: JSX.Element[];
+  children: ReactNode;
 }
 
 export interface CristalState {
@@ -19,9 +17,9 @@ export interface CristalState {
   height?: number;
 }
 
-class Cristal extends Component<CristalProps, CristalState> {
-  headerElement: Element;
-  childrenElement: Element;
+export class Cristal extends Component<CristalProps, CristalState> {
+  headerElement?: Element;
+  childrenElement?: Element;
 
   state: CristalState = {
     x: 1,
@@ -41,14 +39,14 @@ class Cristal extends Component<CristalProps, CristalState> {
   }
 
   saveWrapperRef = (el: Element) => {
-    // TODO: Find more robust way of getting the children
-    this.childrenElement = el.children[1];
+    this.childrenElement = el;
     this.setInitialDimensions();
   }
 
   setInitialDimensions() {
-    const {width, height} = this.childrenElement.getBoundingClientRect();
+    if (!this.childrenElement) return;
 
+    const {width, height} = this.childrenElement.getBoundingClientRect();
     this.setState({
       width,
       height 
@@ -56,12 +54,10 @@ class Cristal extends Component<CristalProps, CristalState> {
   }
 
   saveHeaderRef = (el: Element) => {
-    console.log(el)
     this.headerElement = el;
   }
 
   onMouseDown = () => {
-    console.log(1)
     this.setState({
       isDragging: true
     });
@@ -74,7 +70,7 @@ class Cristal extends Component<CristalProps, CristalState> {
     if (isDragging) {
       const {x, y} = this.state;
       // TODO: Find better place to 'getBoundingClientRect'
-      const {width} = this.headerElement.getBoundingClientRect();
+      // const {width} = this.headerElement.getBoundingClientRect();
       const newX = x + movementX;
       const newY = y + movementY;
 
@@ -87,8 +83,8 @@ class Cristal extends Component<CristalProps, CristalState> {
 
     if (isResizing) {
       const {width, height} = this.state;
-      const newWidth = width + movementX;
-      const newHeight = height + movementY;
+      const newWidth = (width || 0) + movementX;
+      const newHeight = (height || 0) + movementY;
 
       this.setState({
         width: newWidth,
@@ -111,37 +107,22 @@ class Cristal extends Component<CristalProps, CristalState> {
   }
 
   get header() {
-    const {children} = this.props;
-    const customHeader = children[0];
-
-    if (children.length && customHeader.type === CristalHeader) {
-      // return <customHeader.type {...customHeader.props} onClick={(e) => console.log(e)} />
-      return React.cloneElement(customHeader, {
-        ref: this.saveHeaderRef,
-        // innerRef: this.saveHeaderRef,
-        onMouseDown: this.onMouseDown,
-        onClick() {
-          debugger
-        }
-      });
-    }
-
-    return <Header />;
+    return (
+      <Header innerRef={this.saveHeaderRef} onMouseDown={this.onMouseDown} />
+    );
   }
 
   get content() {
     const {children} = this.props;
-    const customContent = children[1];
 
-    if (children.length && customContent.type === CristalContent) {
-      return customContent;
-    }
-
-    return children;
+    return (
+      <ContentWrapper>
+        {children}
+      </ContentWrapper>
+    );
   }
 
   render() {
-    const {children} = this.props;
     const {x, y, width, height, isDragging, isResizing} = this.state;
     const isActive = isDragging || isResizing;
     const style = {
@@ -168,5 +149,3 @@ class Cristal extends Component<CristalProps, CristalState> {
     );
   }
 }
-
-export default Cristal;

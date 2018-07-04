@@ -1,2 +1,2 @@
 # react-cristal
-Convert any component into a window
+> Convert any component into a window

@@ -9,7 +9,7 @@ export interface CristalHeaderState {
   
 }
 
-export default class CristalHeader extends Component<CristalHeaderProps, CristalHeaderState> {
+export class CristalHeader extends Component<CristalHeaderProps, CristalHeaderState> {
   render() {
     return <div>Custom header</div>;
   }

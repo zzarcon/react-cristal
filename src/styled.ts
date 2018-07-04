@@ -19,12 +19,16 @@ export const Wrapper = styled.div`
   position: fixed;
   display: inline-flex;
   flex-direction: column;
-  border: 1px solid black;
+  background: white;
+  border-radius: 3px;
+  box-shadow: rgba(0, 0, 0, 0.25) 0px 2px 5px, rgba(0, 0, 0, 0.1) 0px 1px 1px;
+  min-width: 400px;
+  min-height: 225px;
 `;
 
 export const Header = styled.div`
   height: 30px;
-  border-bottom: 1px solid black;
+  border-bottom: 1px solid #ccc;
   cursor: -webkit-grab;
 `;
 
@@ -35,4 +39,8 @@ export const ResizeHandle = styled.div`
   bottom: 0;
   right: 0;
   cursor: nwse-resize;
+`;
+
+export const ContentWrapper = styled.div`
+  padding: 10px;
 `;

@@ -9,7 +9,7 @@ export interface CristalContentState {
   
 }
 
-export default class CristalContent extends Component<CristalContentProps, CristalContentState> {
+export class CristalContent extends Component<CristalContentProps, CristalContentState> {
   render() {
     return <div>Custom Content</div>;
   }
