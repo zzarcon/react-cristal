@@ -1,6 +1,6 @@
 {
   "name": "react-cristal",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Convert any component into a window Edit",
   "main": "dist/index.js",
   "repository": "",
