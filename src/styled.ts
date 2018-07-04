@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+// @ts-ignore: unused variable
 import {
   // @ts-ignore: unused variable
   HTMLAttributes,

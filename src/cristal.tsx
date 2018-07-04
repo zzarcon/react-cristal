@@ -73,8 +73,8 @@ export class Cristal extends Component<CristalProps, CristalState> {
       const {x, y, width, height} = this.state;
       const newX = x + movementX;
       const newY = y + movementY;
-      const maxX = window.innerWidth - width - PADDING;
-      const maxY = window.innerHeight - height - PADDING;
+      const maxX = window.innerWidth - (width || 0) - PADDING;
+      const maxY = window.innerHeight - (height || 0) - PADDING;
 
       this.setState({
         x: Math.min(Math.max(newX, PADDING), maxX),
