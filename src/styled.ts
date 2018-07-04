@@ -1,4 +1,10 @@
 import styled from 'styled-components';
+import {
+  // @ts-ignore: unused variable
+  HTMLAttributes,
+  // @ts-ignore: unused variable
+  ClassAttributes
+} from 'react';
 
 export interface WrapperProps {
   isActive: boolean;
