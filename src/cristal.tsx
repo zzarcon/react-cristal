@@ -17,6 +17,8 @@ export interface CristalState {
   height?: number;
 }
 
+const PADDING = 10;
+
 export class Cristal extends Component<CristalProps, CristalState> {
   headerElement?: Element;
   childrenElement?: Element;
@@ -68,15 +70,15 @@ export class Cristal extends Component<CristalProps, CristalState> {
     const {movementX, movementY} = e;
 
     if (isDragging) {
-      const {x, y} = this.state;
-      // TODO: Find better place to 'getBoundingClientRect'
-      // const {width} = this.headerElement.getBoundingClientRect();
+      const {x, y, width, height} = this.state;
       const newX = x + movementX;
       const newY = y + movementY;
+      const maxX = window.innerWidth - width - PADDING;
+      const maxY = window.innerHeight - height - PADDING;
 
       this.setState({
-        x: Math.max(newX, 0),
-        y: Math.max(newY, 0)
+        x: Math.min(Math.max(newX, PADDING), maxX),
+        y: Math.min(Math.max(newY, PADDING), maxY)
       });
       return;
     }
