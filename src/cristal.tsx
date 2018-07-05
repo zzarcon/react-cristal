@@ -66,15 +66,15 @@ export class Cristal extends Component<CristalProps, CristalState> {
   }
 
   onMouseMove = (e: MouseEvent) => {
-    const {isDragging, isResizing} = this.state;
+    const {isDragging, isResizing, x, y, width: currentWidth, height: currentHeight} = this.state;
     const {movementX, movementY} = e;
-
+    const {innerWidth, innerHeight} = window;
+    const newX = x + movementX;
+    const newY = y + movementY;
+      
     if (isDragging) {
-      const {x, y, width, height} = this.state;
-      const newX = x + movementX;
-      const newY = y + movementY;
-      const maxX = window.innerWidth - (width || 0) - PADDING;
-      const maxY = window.innerHeight - (height || 0) - PADDING;
+      const maxX = innerWidth - (currentWidth || 0) - PADDING;
+      const maxY = innerHeight - (currentHeight || 0) - PADDING;
 
       this.setState({
         x: Math.min(Math.max(newX, PADDING), maxX),
@@ -84,13 +84,16 @@ export class Cristal extends Component<CristalProps, CristalState> {
     }
 
     if (isResizing) {
-      const {width, height} = this.state;
-      const newWidth = (width || 0) + movementX;
-      const newHeight = (height || 0) + movementY;
+      const newWidth = (currentWidth || 0) + movementX;
+      const newHeight = (currentHeight || 0) + movementY;
+      const maxHeight = innerHeight - newY - PADDING;
+      const maxWidth = innerWidth - newX - PADDING;
+      const height = newHeight > maxHeight ? currentHeight : newHeight;
+      const width = newWidth > maxWidth ? currentWidth : newWidth;
 
       this.setState({
-        width: newWidth,
-        height: newHeight
+        width,
+        height
       });
     }
   }
