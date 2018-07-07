@@ -1,11 +1,17 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import {Component, ReactNode} from 'react';
-
-import {Wrapper, Header, ResizeHandle, ContentWrapper} from './styled';
+import {Wrapper, Header, ResizeHandle, ContentWrapper, padding, CloseIcon, Title} from './styled';
+import { InitialPosition, Size } from './domain';
+import { getCordsFromInitialPosition, getBoundaryCoords } from './utils';
 
 export interface CristalProps {
   children: ReactNode;
+  title?: string;
+  initialPosition?: InitialPosition;
+  isResizable?: boolean;
+  onClose?: () => void;
+  className?: string;
 }
 
 export interface CristalState {
@@ -17,15 +23,13 @@ export interface CristalState {
   height?: number;
 }
 
-const PADDING = 10;
-
 export class Cristal extends Component<CristalProps, CristalState> {
   headerElement?: Element;
   childrenElement?: Element;
 
   state: CristalState = {
-    x: 1,
-    y: 1,
+    x: padding,
+    y: padding,
     isDragging: false,
     isResizing: false
   }
@@ -40,18 +44,30 @@ export class Cristal extends Component<CristalProps, CristalState> {
     document.removeEventListener('mouseup', this.onMouseUp);
   }
 
-  saveWrapperRef = (el: Element) => {
+  saveWrapperRef = (el?: Element) => {
     this.childrenElement = el;
-    this.setInitialDimensions();
-  }
-
-  setInitialDimensions() {
     if (!this.childrenElement) return;
 
     const {width, height} = this.childrenElement.getBoundingClientRect();
     this.setState({
       width,
       height 
+    });
+
+    this.setInitialPosition({width, height});
+  }
+
+  setInitialPosition = (size: Size) => {
+    const {initialPosition} = this.props;
+    if (!initialPosition) return;
+
+    const {x, y} = getCordsFromInitialPosition(initialPosition);
+    const {width, height} = size;
+    const {x: newX, y: newY} = getBoundaryCoords({x, y}, {width, height});
+
+    this.setState({
+      x: newX,
+      y: newY
     });
   }
 
@@ -66,28 +82,26 @@ export class Cristal extends Component<CristalProps, CristalState> {
   }
 
   onMouseMove = (e: MouseEvent) => {
-    const {isDragging, isResizing, x, y, width: currentWidth, height: currentHeight} = this.state;
+    const {isDragging, isResizing, x: currentX, y: currentY, width: currentWidth, height: currentHeight} = this.state;
     const {movementX, movementY} = e;
     const {innerWidth, innerHeight} = window;
-    const newX = x + movementX;
-    const newY = y + movementY;
+    const newX = currentX + movementX;
+    const newY = currentY + movementY;
       
     if (isDragging) {
-      const maxX = innerWidth - (currentWidth || 0) - PADDING;
-      const maxY = innerHeight - (currentHeight || 0) - PADDING;
+      const size = currentWidth && currentHeight ? {width: currentWidth, height: currentHeight} : undefined;
+      const {x, y} = getBoundaryCoords({x: newX, y: newY}, size);
 
-      this.setState({
-        x: Math.min(Math.max(newX, PADDING), maxX),
-        y: Math.min(Math.max(newY, PADDING), maxY)
-      });
+      this.setState({ x, y });
+
       return;
     }
 
     if (isResizing) {
       const newWidth = (currentWidth || 0) + movementX;
       const newHeight = (currentHeight || 0) + movementY;
-      const maxHeight = innerHeight - newY - PADDING;
-      const maxWidth = innerWidth - newX - PADDING;
+      const maxHeight = innerHeight - newY - padding;
+      const maxWidth = innerWidth - newX - padding;
       const height = newHeight > maxHeight ? currentHeight : newHeight;
       const width = newWidth > maxWidth ? currentWidth : newWidth;
 
@@ -112,8 +126,13 @@ export class Cristal extends Component<CristalProps, CristalState> {
   }
 
   get header() {
+    const {onClose, title} = this.props;
+
     return (
-      <Header innerRef={this.saveHeaderRef} onMouseDown={this.onMouseDown} />
+      <Header innerRef={this.saveHeaderRef} onMouseDown={this.onMouseDown} onClick={onClose} >
+        {title && <Title>{title}</Title>}
+        <CloseIcon />
+      </Header>
     );
   }
 
@@ -129,20 +148,24 @@ export class Cristal extends Component<CristalProps, CristalState> {
 
   render() {
     const {x, y, width, height, isDragging, isResizing} = this.state;
+    const {className} = this.props;
     const isActive = isDragging || isResizing;
     const style = {
-      transform: `translate(${x}px, ${y}px)`,
+      left: x,
+      top: y,
       width, 
       height
     };
     const HeaderComponent = this.header;
     const ContentComponent = this.content;
 
+    // TODO: use "visibility"|"opacity" to avoid initial position glitch
     return ReactDOM.createPortal(
       <Wrapper
         style={style}
         innerRef={this.saveWrapperRef}
         isActive={isActive}
+        className={className}
       >
         {HeaderComponent}
         {ContentComponent}

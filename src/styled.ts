@@ -11,6 +11,10 @@ export interface WrapperProps {
   isActive: boolean;
 }
 
+export const minWidth = 400;
+export const minHeight = 225;
+export const padding = 10;
+
 const wrapperStyles = ({isActive}: WrapperProps) => {
   if (isActive) {
     return `
@@ -29,14 +33,18 @@ export const Wrapper = styled.div`
   background: white;
   border-radius: 3px;
   box-shadow: rgba(0, 0, 0, 0.25) 0px 2px 5px, rgba(0, 0, 0, 0.1) 0px 1px 1px;
-  min-width: 400px;
-  min-height: 225px;
+  min-width: ${minWidth}px;
+  min-height: ${minHeight}px;
 `;
 
 export const Header = styled.div`
   height: 30px;
   border-bottom: 1px solid #ccc;
   cursor: -webkit-grab;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-left: ${padding}px;
 `;
 
 export const ResizeHandle = styled.div`
@@ -49,5 +57,41 @@ export const ResizeHandle = styled.div`
 `;
 
 export const ContentWrapper = styled.div`
-  padding: 10px;
+  padding: ${padding}px;
+`;
+
+export const CloseIcon = styled.div`
+  position: relative;
+  width: 20px;
+  height: 20px;
+  opacity: 0.3;
+  cursor: pointer;
+
+  &:hover {
+    opacity: 1;
+  }
+
+  &:before, &:after {
+    position: absolute;
+    right: 15px;
+    content: ' ';
+    height: 21px;
+    width: 2px;
+    background-color: #333;
+  }
+
+  &:before {
+    transform: rotate(45deg);
+  }
+
+  &:after {
+    transform: rotate(-45deg);
+  }
+`;
+
+export const Title = styled.div`
+  white-space: nowrap;
+  max-width: calc(100% - 25px);
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
