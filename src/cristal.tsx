@@ -4,6 +4,7 @@ import {Component, ReactNode} from 'react';
 import {Wrapper, Header, ResizeHandle, ContentWrapper, padding, CloseIcon, Title} from './styled';
 import { InitialPosition, Size } from './domain';
 import { getCordsFromInitialPosition, getBoundaryCoords } from './utils';
+import { Stacker } from './stacker';
 
 export interface CristalProps {
   children: ReactNode;
@@ -19,6 +20,7 @@ export interface CristalState {
   y: number;
   isDragging: boolean;
   isResizing: boolean;
+  zIndex: number;
   width?: number;
   height?: number;
 }
@@ -36,7 +38,8 @@ export class Cristal extends Component<CristalProps, CristalState> {
     x: padding,
     y: padding,
     isDragging: false,
-    isResizing: false
+    isResizing: false,
+    zIndex: Stacker.getNextIndex()
   }
 
   componentDidMount() {
@@ -80,14 +83,10 @@ export class Cristal extends Component<CristalProps, CristalState> {
     const {initialPosition} = this.props;
     if (!initialPosition) return;
 
-    const {x, y} = getCordsFromInitialPosition(initialPosition);
-    const {width, height} = size;
-    const {x: newX, y: newY} = getBoundaryCoords({x, y}, {width, height});
+    const cords = getCordsFromInitialPosition(initialPosition, size);
+    const {x, y} = getBoundaryCoords(cords, size);
 
-    this.setState({
-      x: newX,
-      y: newY
-    });
+    this.setState({x, y});
   }
 
   saveHeaderRef = (el: Element) => {
@@ -149,7 +148,7 @@ export class Cristal extends Component<CristalProps, CristalState> {
 
     return (
       <Header innerRef={this.saveHeaderRef} onMouseDown={this.onMouseDown} >
-        {title && <Title>{title}</Title>}
+        <Title>{title}</Title>
         <CloseIcon onClick={onClose} />
       </Header>
     );
@@ -176,15 +175,22 @@ export class Cristal extends Component<CristalProps, CristalState> {
     );
   }
 
+  changeZIndex = () => {
+    this.setState({
+      zIndex: Stacker.getNextIndex()
+    });
+  }
+
   render() {
-    const {x, y, width, height, isDragging, isResizing} = this.state;
+    const {x, y, width, height, isDragging, isResizing, zIndex} = this.state;
     const {className} = this.props;
     const isActive = isDragging || isResizing;
     const style = {
       left: x,
       top: y,
       width, 
-      height
+      height,
+      zIndex
     };
     const HeaderComponent = this.header;
     const ContentComponent = this.content;
@@ -196,6 +202,7 @@ export class Cristal extends Component<CristalProps, CristalState> {
         innerRef={this.saveWrapperRef}
         isActive={isActive}
         className={className}
+        onMouseDown={this.changeZIndex}
       >
         {HeaderComponent}
         {ContentComponent}

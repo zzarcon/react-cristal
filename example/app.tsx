@@ -4,7 +4,7 @@ import Select from '@atlaskit/single-select';
 import Button from '@atlaskit/button';
 import FieldText from '@atlaskit/field-text';
 import Cristal, { InitialPosition, CristalProps } from '../src';
-import {ComponentWrapper, CristalCreatorWrapper} from './styled';
+import {ComponentWrapper} from './styled';
 
 export interface AppProps {
 
@@ -23,15 +23,18 @@ const positionItems = [
   {
     items: [
       { value: 'top-left', content: 'Top left' },
+      { value: 'top-center', content: 'Top center' },
       { value: 'top-right', content: 'Top right' },
+      { value: 'center', content: 'Center' },
       { value: 'bottom-left', content: 'Bottom left' },
+      { value: 'bottom-center', content: 'Bottom center' },
       { value: 'bottom-right', content: 'Bottom right' }
     ]
   }
 ];
 const selectedItem: any = positionItems[0].items[1];
-const defaultTitle = 'Cristal author';
-const defaultChildren = 'Hector';
+const defaultTitle = 'Fancy window';
+const defaultChildren = '😎';
 
 export default class App extends Component<AppProps, AppState> {
   state: AppState = {
@@ -117,7 +120,7 @@ export default class App extends Component<AppProps, AppState> {
     return (
       <div>
         {this.renderCristals()}
-        <CristalCreatorWrapper>
+        <Cristal title="Create a new cristal window" isResizable={false} initialPosition="top-center">
           <Select
             label="Position"
             items={positionItems}
@@ -130,7 +133,7 @@ export default class App extends Component<AppProps, AppState> {
           <Button appearance="primary" onClick={this.createNewCristal}>
             Create
           </Button>
-        </CristalCreatorWrapper>
+        </Cristal>
       </div>
     );
   }
