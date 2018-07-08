@@ -37,11 +37,25 @@ export class Cristal extends Component<CristalProps, CristalState> {
   componentDidMount() {
     document.addEventListener('mousemove', this.onMouseMove);
     document.addEventListener('mouseup', this.onMouseUp);
+    window.addEventListener('resize', this.onWindowResize);
   }
 
   componentWillUnmount() {
     document.removeEventListener('mousemove', this.onMouseMove);
     document.removeEventListener('mouseup', this.onMouseUp);
+    window.removeEventListener('resize', this.onWindowResize);
+  }
+
+  // TODO-PERF: debounce
+  onWindowResize = () => {
+    const {x, y, width, height} = this.state;
+    const size = width && height ? {width, height} : undefined;
+    const {x: newX, y: newY} = getBoundaryCoords({x, y}, size);
+
+    this.setState({
+      x: newX,
+      y: newY
+    });
   }
 
   saveWrapperRef = (el?: Element) => {
