@@ -1,8 +1,10 @@
 import * as React from 'react';
 import {Component} from 'react';
 import Select from '@atlaskit/single-select';
-import Cristal, { InitialPosition } from '../src';
-import {ComponentWrapper} from './styled';
+import Button from '@atlaskit/button';
+import FieldText from '@atlaskit/field-text';
+import Cristal, { InitialPosition, CristalProps } from '../src';
+import {ComponentWrapper, CristalCreatorWrapper} from './styled';
 
 export interface AppProps {
 
@@ -13,6 +15,8 @@ export interface AppState {
   title: string;
   isResizable: boolean;
   isVisible: boolean;
+  cristals: CristalProps[];
+  children: string;
 }
 
 const positionItems = [
@@ -25,14 +29,22 @@ const positionItems = [
     ]
   }
 ];
-const selectedItem: any = positionItems[0].items[2];
+const selectedItem: any = positionItems[0].items[1];
+const defaultTitle = 'Cristal author';
+const defaultChildren = 'Hector';
 
 export default class App extends Component<AppProps, AppState> {
   state: AppState = {
-    title: 'Cristal author',
+    title: defaultTitle,
     initialPosition: selectedItem,
     isResizable: false,
-    isVisible: true
+    isVisible: true,
+    children: defaultChildren,
+    cristals: [{
+      children: defaultChildren,
+      title: defaultTitle,
+      initialPosition: 'bottom-left'
+    }]
   }
 
   onPositionChange = (e: any) => {
@@ -41,39 +53,84 @@ export default class App extends Component<AppProps, AppState> {
     });
   }
 
-  onClose = () => {
-    this.setState({isVisible: false});
+  removeCristal = (index: number) => () => {
+    const {cristals} = this.state;
+
+    cristals.splice(index, 1);
+
+    this.setState({
+      cristals
+    });
   }
 
-  renderCristal = () => {
-    const {isVisible, initialPosition, title, isResizable} = this.state;
-    if (!isVisible) return;
+  renderCristals = () => {
+    const {cristals} = this.state;
+    if (!cristals.length) return;
 
-    return (
-      <Cristal
-        title={title}
-        initialPosition={initialPosition.value}
-        onClose={this.onClose}
-        isResizable={isResizable}
-      >
-        <ComponentWrapper>
-          Hector
-        </ComponentWrapper>
-      </Cristal>
-    );
+    const content = cristals.map((cristal, index) => {
+      const {title, initialPosition, isResizable, children} = cristal;
+      return (
+        <Cristal
+          key={index}
+          title={title}
+          initialPosition={initialPosition}
+          onClose={this.removeCristal(index)}
+          isResizable={isResizable}
+        >
+          <ComponentWrapper>
+            {children}
+          </ComponentWrapper>          
+        </Cristal>  
+      )
+    });
+
+    return content;
+  }
+
+  createNewCristal = () => {
+    const {cristals, title, children, initialPosition} = this.state;
+
+    cristals.push({
+      children,
+      title,
+      initialPosition: initialPosition.value
+    });
+
+    this.setState({cristals});
+  }
+
+  onTitleChange = (e: any) => {
+    const title = e.target.value;
+    
+    this.setState({title});
+  }
+
+  onChildrenChange = (e: any) => {
+    const children = e.target.value;
+    
+    this.setState({children});
   }
 
   render() {
+    const {title, children} = this.state;
+
     return (
       <div>
-        {this.renderCristal()}
-        <Select
-          label="Position"
-          items={positionItems}
-          defaultSelected={selectedItem}
-          onSelected={this.onPositionChange}
-          droplistShouldFitContainer={true}
-        />
+        {this.renderCristals()}
+        <CristalCreatorWrapper>
+          <Select
+            label="Position"
+            items={positionItems}
+            defaultSelected={selectedItem}
+            onSelected={this.onPositionChange}
+            droplistShouldFitContainer={true}
+          />
+          <FieldText label="Title" value={title} onChange={this.onTitleChange} />
+          <FieldText label="Content" value={children} onChange={this.onChildrenChange} />
+          <Button appearance="primary" onClick={this.createNewCristal}>
+            Create
+          </Button>
+        </CristalCreatorWrapper>
       </div>
     );
   }

@@ -15,3 +15,7 @@ injectGlobal`
 export const ComponentWrapper = styled.div`
   
 `;
+
+export const CristalCreatorWrapper = styled.div`
+
+`;
