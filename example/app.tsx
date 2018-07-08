@@ -11,6 +11,8 @@ export interface AppProps {
 export interface AppState {
   initialPosition: {value: InitialPosition};
   title: string;
+  isResizable: boolean;
+  isVisible: boolean;
 }
 
 const positionItems = [
@@ -28,7 +30,9 @@ const selectedItem: any = positionItems[0].items[2];
 export default class App extends Component<AppProps, AppState> {
   state: AppState = {
     title: 'Cristal author',
-    initialPosition: selectedItem
+    initialPosition: selectedItem,
+    isResizable: false,
+    isVisible: true
   }
 
   onPositionChange = (e: any) => {
@@ -38,23 +42,31 @@ export default class App extends Component<AppProps, AppState> {
   }
 
   onClose = () => {
-    console.log('onClose')
+    this.setState({isVisible: false});
+  }
+
+  renderCristal = () => {
+    const {isVisible, initialPosition, title, isResizable} = this.state;
+    if (!isVisible) return;
+
+    return (
+      <Cristal
+        title={title}
+        initialPosition={initialPosition.value}
+        onClose={this.onClose}
+        isResizable={isResizable}
+      >
+        <ComponentWrapper>
+          Hector
+        </ComponentWrapper>
+      </Cristal>
+    );
   }
 
   render() {
-    const {initialPosition, title} = this.state;
-
     return (
       <div>
-        <Cristal 
-          title={title}
-          initialPosition={initialPosition.value}
-          onClose={this.onClose}
-        >
-          <ComponentWrapper>
-            Hector
-          </ComponentWrapper>
-        </Cristal>
+        {this.renderCristal()}
         <Select
           label="Position"
           items={positionItems}

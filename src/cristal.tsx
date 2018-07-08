@@ -27,6 +27,11 @@ export class Cristal extends Component<CristalProps, CristalState> {
   headerElement?: Element;
   childrenElement?: Element;
 
+  static defaultProps: CristalProps = {
+    children: null,
+    isResizable: true
+  }
+
   state: CristalState = {
     x: padding,
     y: padding,
@@ -143,9 +148,9 @@ export class Cristal extends Component<CristalProps, CristalState> {
     const {onClose, title} = this.props;
 
     return (
-      <Header innerRef={this.saveHeaderRef} onMouseDown={this.onMouseDown} onClick={onClose} >
+      <Header innerRef={this.saveHeaderRef} onMouseDown={this.onMouseDown} >
         {title && <Title>{title}</Title>}
-        <CloseIcon />
+        <CloseIcon onClick={onClose} />
       </Header>
     );
   }
@@ -157,6 +162,17 @@ export class Cristal extends Component<CristalProps, CristalState> {
       <ContentWrapper>
         {children}
       </ContentWrapper>
+    );
+  }
+
+  renderResizeHandle = () => {
+    const {isResizable} = this.props;
+    if (!isResizable) return;
+
+    return (
+      <ResizeHandle
+        onMouseDown={this.onResizeStart}
+      />
     );
   }
 
@@ -183,9 +199,7 @@ export class Cristal extends Component<CristalProps, CristalState> {
       >
         {HeaderComponent}
         {ContentComponent}
-        <ResizeHandle
-          onMouseDown={this.onResizeStart}
-        />
+        {this.renderResizeHandle()}
       </Wrapper>,
       document.body
     );
