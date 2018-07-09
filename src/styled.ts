@@ -18,7 +18,7 @@ export const padding = 10;
 const wrapperStyles = ({isActive}: WrapperProps) => {
   if (isActive) {
     return `
-      user-select: none;
+      
     `;
   }
 
@@ -35,6 +35,7 @@ export const Wrapper = styled.div`
   box-shadow: rgba(0, 0, 0, 0.25) 0px 2px 5px, rgba(0, 0, 0, 0.1) 0px 1px 1px;
   min-width: ${minWidth}px;
   min-height: ${minHeight}px;
+  user-select: none;
 `;
 
 export const Header = styled.div`
@@ -47,7 +48,7 @@ export const Header = styled.div`
   padding-left: ${padding}px;
 `;
 
-export const ResizeHandle = styled.div`
+export const BottomRightResizeHandle = styled.div`
   width: 20px;
   height: 20px;
   position: absolute;
@@ -94,4 +95,22 @@ export const Title = styled.div`
   max-width: calc(100% - 25px);
   overflow: hidden;
   text-overflow: ellipsis;
+`;
+
+export const RightResizeHandle = styled.div`
+  width: 20px;
+  height: 100%;
+  position: absolute;
+  bottom: 20px;
+  right: 0;
+  cursor: ew-resize;
+`;
+
+export const BottomResizeHandle = styled.div`
+  width: calc(100% - 40px);
+  height: 20px;
+  position: absolute;
+  bottom: 0;
+  left: 20px;
+  cursor: ns-resize;
 `;

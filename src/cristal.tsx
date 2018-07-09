@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import {Component, ReactNode} from 'react';
-import {Wrapper, Header, ResizeHandle, ContentWrapper, padding, CloseIcon, Title} from './styled';
+import {Wrapper, Header, BottomRightResizeHandle, RightResizeHandle, BottomResizeHandle, ContentWrapper, padding, CloseIcon, Title} from './styled';
 import { InitialPosition, Size } from './domain';
 import { getCordsFromInitialPosition, getBoundaryCoords } from './utils';
 import { Stacker } from './stacker';
@@ -19,7 +19,8 @@ export interface CristalState {
   x: number;
   y: number;
   isDragging: boolean;
-  isResizing: boolean;
+  isResizingX: boolean;
+  isResizingY: boolean;
   zIndex: number;
   width?: number;
   height?: number;
@@ -38,7 +39,8 @@ export class Cristal extends Component<CristalProps, CristalState> {
     x: padding,
     y: padding,
     isDragging: false,
-    isResizing: false,
+    isResizingX: false,
+    isResizingY: false,
     zIndex: Stacker.getNextIndex()
   }
 
@@ -100,7 +102,8 @@ export class Cristal extends Component<CristalProps, CristalState> {
   }
 
   onMouseMove = (e: MouseEvent) => {
-    const {isDragging, isResizing, x: currentX, y: currentY, width: currentWidth, height: currentHeight} = this.state;
+    const {isResizing} = this;
+    const {isDragging, x: currentX, y: currentY, width: currentWidth, height: currentHeight} = this.state;
     const {movementX, movementY} = e;
     const {innerWidth, innerHeight} = window;
     const newX = currentX + movementX;
@@ -116,32 +119,53 @@ export class Cristal extends Component<CristalProps, CristalState> {
     }
 
     if (isResizing) {
-      const newWidth = (currentWidth || 0) + movementX;
-      const newHeight = (currentHeight || 0) + movementY;
-      const maxHeight = innerHeight - newY - padding;
-      const maxWidth = innerWidth - newX - padding;
-      const height = newHeight > maxHeight ? currentHeight : newHeight;
-      const width = newWidth > maxWidth ? currentWidth : newWidth;
+      const {isResizingX, isResizingY} = this.state;
 
-      this.setState({
-        width,
-        height
-      });
+      if (isResizingX) {
+        const maxWidth = innerWidth - newX - padding;
+        const newWidth = (currentWidth || 0) + movementX;
+        const width = newWidth > maxWidth ? currentWidth : newWidth;
+        this.setState({width});
+      }
+
+      if (isResizingY) {
+        const newHeight = (currentHeight || 0) + movementY;
+        const maxHeight = innerHeight - newY - padding;  
+        const height = newHeight > maxHeight ? currentHeight : newHeight;
+      
+        this.setState({height});
+      }
     }
+  }
+
+  get isResizing(): boolean {
+    const {isResizingX, isResizingY} = this.state;
+
+    return isResizingX || isResizingY;
   }
 
   onMouseUp = () => {
     this.setState({
       isDragging: false,
-      isResizing: false
+      isResizingX: false,
+      isResizingY: false,
     });
   }
 
-  onResizeStart = () => {
+  startFullResize = () => {
+    // TODO: save cursor before start resizing
+    // TODO: reset cursor after finish resizing
+    // document.body.style.cursor = 'nwse-resize';
+
     this.setState({
-      isResizing: true
-    })
+      isResizingX: true,
+      isResizingY: true
+    });
   }
+
+  startXResize = () => this.setState({isResizingX: true})
+
+  startYResize = () => this.setState({isResizingY: true})
 
   get header() {
     const {onClose, title} = this.props;
@@ -164,15 +188,24 @@ export class Cristal extends Component<CristalProps, CristalState> {
     );
   }
 
-  renderResizeHandle = () => {
+  renderResizeHandles = () => {
     const {isResizable} = this.props;
     if (!isResizable) return;
 
-    return (
-      <ResizeHandle
-        onMouseDown={this.onResizeStart}
-      />
-    );
+    return [
+      <RightResizeHandle
+        key="right-resize"
+        onMouseDown={this.startXResize}
+      />,
+      <BottomRightResizeHandle
+        key="bottom-right-resize"
+        onMouseDown={this.startFullResize}
+      />,
+      <BottomResizeHandle
+        key="bottom-resize"
+        onMouseDown={this.startYResize}
+      />,
+    ];
   }
 
   changeZIndex = () => {
@@ -182,7 +215,8 @@ export class Cristal extends Component<CristalProps, CristalState> {
   }
 
   render() {
-    const {x, y, width, height, isDragging, isResizing, zIndex} = this.state;
+    const {isResizing} = this;
+    const {x, y, width, height, isDragging, zIndex} = this.state;
     const {className} = this.props;
     const isActive = isDragging || isResizing;
     const style = {
@@ -206,7 +240,7 @@ export class Cristal extends Component<CristalProps, CristalState> {
       >
         {HeaderComponent}
         {ContentComponent}
-        {this.renderResizeHandle()}
+        {this.renderResizeHandles()}
       </Wrapper>,
       document.body
     );

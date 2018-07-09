@@ -21,7 +21,7 @@ export  const getCordsFromInitialPosition = (initialPosition?: InitialPosition, 
   const {width, height} = size;
   const xCenter = (innerWidth / 2) - (width / 2);
   const yCenter = (innerHeight / 2) - (height / 2);
-  console.log({yCenter})
+
   switch (initialPosition) {
     case 'top-left': default:
       return {x: 10, y: 10};

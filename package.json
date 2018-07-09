@@ -1,7 +1,7 @@
 {
   "name": "react-cristal",
   "version": "0.0.2",
-  "description": "Convert any component into a window Edit",
+  "description": "Convert any component into a window",
   "main": "dist/index.js",
   "repository": "",
   "author": "Hector Leon Zarco Garcia <hezarco@gmail.com>",
