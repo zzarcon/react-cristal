@@ -4,7 +4,7 @@ import Select from '@atlaskit/single-select';
 import Button from '@atlaskit/button';
 import FieldText from '@atlaskit/field-text';
 import Cristal, { InitialPosition, CristalProps } from '../src';
-import {ComponentWrapper} from './styled';
+import {ComponentWrapper, CristalCreatorWrapper} from './styled';
 
 export interface AppProps {
 
@@ -121,18 +121,20 @@ export default class App extends Component<AppProps, AppState> {
       <div>
         {this.renderCristals()}
         <Cristal title="Create a new cristal window" isResizable={false} initialPosition="top-center">
-          <Select
-            label="Position"
-            items={positionItems}
-            defaultSelected={selectedItem}
-            onSelected={this.onPositionChange}
-            droplistShouldFitContainer={true}
-          />
-          <FieldText label="Title" value={title} onChange={this.onTitleChange} />
-          <FieldText label="Content" value={children} onChange={this.onChildrenChange} />
-          <Button appearance="primary" onClick={this.createNewCristal}>
-            Create
-          </Button>
+          <CristalCreatorWrapper>
+            <Select
+              label="Position"
+              items={positionItems}
+              defaultSelected={selectedItem}
+              onSelected={this.onPositionChange}
+              droplistShouldFitContainer={true}
+            />
+            <FieldText label="Title" value={title} onChange={this.onTitleChange} />
+            <FieldText label="Content" value={children} onChange={this.onChildrenChange} />
+            <Button appearance="primary" onClick={this.createNewCristal}>
+              Create
+            </Button>
+          </CristalCreatorWrapper>
         </Cristal>
       </div>
     );

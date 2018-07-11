@@ -11,7 +11,10 @@ export interface CristalProps {
   title?: string;
   initialPosition?: InitialPosition;
   isResizable?: boolean;
+  isDraggable?: boolean;
   onClose?: () => void;
+  onMove?: (state: CristalState) => void;
+  onResize?: (state: CristalState) => void;
   className?: string;
 }
 
@@ -32,7 +35,8 @@ export class Cristal extends Component<CristalProps, CristalState> {
 
   static defaultProps: CristalProps = {
     children: null,
-    isResizable: true
+    isResizable: true,
+    isDraggable: true
   }
 
   state: CristalState = {
