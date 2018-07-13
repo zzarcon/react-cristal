@@ -97,9 +97,18 @@ export const Title = styled.div`
   text-overflow: ellipsis;
 `;
 
+export const LeftResizeHandle = styled.div`
+  width: 20px;
+  height: calc(100% - 50px);
+  position: absolute;
+  bottom: 20px;
+  left: 0;
+  cursor: ew-resize;
+`;
+
 export const RightResizeHandle = styled.div`
   width: 20px;
-  height: 100%;
+  height: calc(100% - 50px);
   position: absolute;
   bottom: 20px;
   right: 0;
