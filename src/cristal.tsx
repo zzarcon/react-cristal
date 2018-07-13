@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import {Component, ReactNode} from 'react';
-import {Wrapper, Header, BottomRightResizeHandle, RightResizeHandle, BottomResizeHandle, ContentWrapper, padding, CloseIcon, Title} from './styled';
+import {Wrapper, Header, BottomRightResizeHandle, RightResizeHandle, BottomResizeHandle, ContentWrapper, padding, CloseIcon, Title, LeftResizeHandle} from './styled';
 import { InitialPosition, Size } from './domain';
 import { getCordsFromInitialPosition, getBoundaryCoords } from './utils';
 import { Stacker } from './stacker';
@@ -24,6 +24,7 @@ export interface CristalState {
   isDragging: boolean;
   isResizingX: boolean;
   isResizingY: boolean;
+  isReverseResize: boolean;
   zIndex: number;
   width?: number;
   height?: number;
@@ -45,6 +46,7 @@ export class Cristal extends Component<CristalProps, CristalState> {
     isDragging: false,
     isResizingX: false,
     isResizingY: false,
+    isReverseResize: false,
     zIndex: Stacker.getNextIndex()
   }
 
@@ -123,12 +125,19 @@ export class Cristal extends Component<CristalProps, CristalState> {
     }
 
     if (isResizing) {
-      const {isResizingX, isResizingY} = this.state;
+      const {isResizingX, isResizingY, isReverseResize} = this.state;
 
       if (isResizingX) {
         const maxWidth = innerWidth - newX - padding;
-        const newWidth = (currentWidth || 0) + movementX;
+        const newWidth = (currentWidth || 0) + Math.abs(movementX);
         const width = newWidth > maxWidth ? currentWidth : newWidth;
+        console.log({currentWidth, width})
+        if (isReverseResize) {
+          const x = currentX - Math.abs(movementX);
+          console.log({currentX, movementX, x});
+          this.setState({x});
+        }
+
         this.setState({width});
       }
 
@@ -167,7 +176,12 @@ export class Cristal extends Component<CristalProps, CristalState> {
     });
   }
 
-  startXResize = () => this.setState({isResizingX: true})
+  startXResize = (isReverseResize: boolean = false) => () => {
+    this.setState({
+      isReverseResize,
+      isResizingX: true
+    });
+  }
 
   startYResize = () => this.setState({isResizingY: true})
 
@@ -197,9 +211,13 @@ export class Cristal extends Component<CristalProps, CristalState> {
     if (!isResizable) return;
 
     return [
+      <LeftResizeHandle
+        key="left-resize"
+        onMouseDown={this.startXResize(true)}
+      />,
       <RightResizeHandle
         key="right-resize"
-        onMouseDown={this.startXResize}
+        onMouseDown={this.startXResize()}
       />,
       <BottomRightResizeHandle
         key="bottom-right-resize"
