@@ -99,7 +99,7 @@ export const Title = styled.div`
 
 export const RightResizeHandle = styled.div`
   width: 20px;
-  height: 100%;
+  height: calc(100% - 50px);
   position: absolute;
   bottom: 20px;
   right: 0;
