@@ -38,10 +38,14 @@ export const Wrapper = styled.div`
   user-select: none;
 `;
 
+export interface HeaderProps {
+  isDraggable: boolean
+}
+
 export const Header = styled.div`
   height: 30px;
   border-bottom: 1px solid #ccc;
-  cursor: -webkit-grab;
+  cursor: ${({isDraggable}: HeaderProps) => isDraggable ? `-webkit-grab` : `default`};
   display: flex;
   align-items: center;
   justify-content: space-between;

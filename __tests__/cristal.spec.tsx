@@ -121,6 +121,19 @@ describe('<Cristal />', () => {
       }));
     });
 
+    it('should not call onMove when coordinates change and isDraggable=false', () => {
+      const {component, onMove} = setup({
+        isDraggable: false
+      });
+      
+      triggerDrag(component, {
+        movementX: 10,
+        movementY: 10
+      });
+
+      expect(onMove).toHaveBeenCalledTimes(0);
+    });
+
     it('should call onResize when size changes', () => {
       const {component, onResize} = setup();
       

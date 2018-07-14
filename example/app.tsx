@@ -126,7 +126,12 @@ export default class App extends Component<AppProps, AppState> {
     return (
       <div>
         {this.renderCristals()}
-        <Cristal title="Create a new cristal window" isResizable={false} initialPosition="top-center">
+        <Cristal 
+          title="Create a new cristal window" 
+          isResizable={false} 
+          isDraggable={false}
+          initialPosition="top-center"
+        >
           <CristalCreatorWrapper>
             <Select
               label="Position"

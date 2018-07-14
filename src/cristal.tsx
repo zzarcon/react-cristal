@@ -100,6 +100,9 @@ export class Cristal extends Component<CristalProps, CristalState> {
   }
 
   onMouseDown = () => {
+    const {isDraggable} = this.props;
+    if (!isDraggable) return;
+
     this.setState({
       isDragging: true
     });
@@ -185,10 +188,10 @@ export class Cristal extends Component<CristalProps, CristalState> {
   startYResize = () => this.setState({isResizingY: true})
 
   get header() {
-    const {onClose, title} = this.props;
+    const {onClose, title, isDraggable} = this.props;
 
     return (
-      <Header innerRef={this.saveHeaderRef} onMouseDown={this.onMouseDown} >
+      <Header isDraggable={isDraggable} innerRef={this.saveHeaderRef} onMouseDown={this.onMouseDown} >
         <Title>{title}</Title>
         <CloseIcon onClick={onClose} />
       </Header>
