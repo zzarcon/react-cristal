@@ -112,13 +112,13 @@ export class Cristal extends Component<CristalProps, CristalState> {
     const {innerWidth, innerHeight} = window;
     const newX = currentX + movementX;
     const newY = currentY + movementY;
-      
+
     if (isDragging) {
       const size = currentWidth && currentHeight ? {width: currentWidth, height: currentHeight} : undefined;
       const {x, y} = getBoundaryCoords({x: newX, y: newY}, size);
 
-      this.setState({ x, y });
-
+      this.setState({ x, y }, this.notifyMove);
+      
       return;
     }
 
@@ -129,7 +129,7 @@ export class Cristal extends Component<CristalProps, CristalState> {
         const maxWidth = innerWidth - newX - padding;
         const newWidth = (currentWidth || 0) + movementX;
         const width = newWidth > maxWidth ? currentWidth : newWidth;
-        this.setState({width});
+        this.setState({width}, this.notifyResize);
       }
 
       if (isResizingY) {
@@ -137,8 +137,21 @@ export class Cristal extends Component<CristalProps, CristalState> {
         const maxHeight = innerHeight - newY - padding;  
         const height = newHeight > maxHeight ? currentHeight : newHeight;
       
-        this.setState({height});
+        this.setState({height}, this.notifyResize);
       }
+    }
+  }
+
+  notifyMove = () => {
+    const {onMove} = this.props;
+    onMove && onMove(this.state);
+  }
+
+  notifyResize = () => {
+    const {onResize} = this.props;
+
+    if (onResize) {
+      onResize(this.state);
     }
   }
 

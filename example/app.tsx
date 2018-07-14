@@ -66,6 +66,11 @@ export default class App extends Component<AppProps, AppState> {
     });
   }
 
+  onMove = (state) => {
+    // TODO: fancy render
+    // console.log('onMove', {state});
+  }
+
   renderCristals = () => {
     const {cristals} = this.state;
     if (!cristals.length) return;
@@ -79,6 +84,7 @@ export default class App extends Component<AppProps, AppState> {
           initialPosition={initialPosition}
           onClose={this.removeCristal(index)}
           isResizable={isResizable}
+          onMove={this.onMove}
         >
           <ComponentWrapper>
             {children}
