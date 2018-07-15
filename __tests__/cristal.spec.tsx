@@ -143,6 +143,12 @@ describe('<Cristal />', () => {
     });
   });
 
+  describe.skip('size', () => {
+    it('should set initial size when initialSize is passed', () => {
+
+    });
+  });
+
   describe.skip('z-index', () => {
     it('should set a new z-index when component mounts', () => {
 

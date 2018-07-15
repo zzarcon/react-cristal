@@ -10,6 +10,7 @@ export interface CristalProps {
   children: ReactNode;
   title?: string;
   initialPosition?: InitialPosition;
+  initialSize?: Size;
   isResizable?: boolean;
   isDraggable?: boolean;
   onClose?: () => void;
@@ -76,12 +77,19 @@ export class Cristal extends Component<CristalProps, CristalState> {
     this.childrenElement = el;
     if (!this.childrenElement) return;
 
-    const {width, height} = this.childrenElement.getBoundingClientRect();
-    this.setState({
-      width,
-      height 
-    });
+    const {initialSize} = this.props;
+    let width, height;
 
+    if (initialSize) {
+      width = initialSize.width;
+      height = initialSize.height;
+    } else {
+      const rect = this.childrenElement.getBoundingClientRect();
+      width = rect.width;
+      height = rect.height;
+    }
+
+    this.setState({width, height});
     this.setInitialPosition({width, height});
   }
 
