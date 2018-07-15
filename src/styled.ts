@@ -11,6 +11,10 @@ export interface WrapperProps {
   isActive: boolean;
 }
 
+export interface HeaderProps {
+  isDraggable?: boolean
+}
+
 export const minWidth = 400;
 export const minHeight = 225;
 export const padding = 10;
@@ -37,10 +41,6 @@ export const Wrapper = styled.div`
   min-height: ${minHeight}px;
   user-select: none;
 `;
-
-export interface HeaderProps {
-  isDraggable: boolean
-}
 
 export const Header = styled.div`
   height: 30px;

@@ -17,5 +17,19 @@ export const ComponentWrapper = styled.div`
 `;
 
 export const CristalCreatorWrapper = styled.div`
+  
+`;
 
+export const CritalOptions = styled.div`
+  display: flex;  
+  margin-bottom: 15px;
+
+  > div {
+    margin: 0 5px;
+  }
+`
+
+export const CristalToggleOptions = styled.div`
+  display: flex;
+  margin-bottom: 15px;
 `;

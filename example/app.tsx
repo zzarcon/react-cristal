@@ -3,8 +3,9 @@ import {Component} from 'react';
 import Select from '@atlaskit/single-select';
 import Button from '@atlaskit/button';
 import FieldText from '@atlaskit/field-text';
-import Cristal, { InitialPosition, CristalProps } from '../src';
-import {ComponentWrapper, CristalCreatorWrapper} from './styled';
+import Checkbox from '@atlaskit/checkbox';
+import Cristal, { InitialPosition, CristalProps, CristalState } from '../src';
+import {ComponentWrapper, CristalCreatorWrapper, CritalOptions, CristalToggleOptions} from './styled';
 
 export interface AppProps {
 
@@ -14,10 +15,14 @@ export interface AppState {
   initialPosition: {value: InitialPosition};
   title: string;
   isResizable: boolean;
+  isDraggable: boolean;
   isVisible: boolean;
   cristals: CristalProps[];
+  cristalStates: {[key: string]: CristalState};
   children: string;
 }
+
+export type StatePropName = keyof AppState;
 
 const positionItems = [
   {
@@ -33,21 +38,26 @@ const positionItems = [
   }
 ];
 const selectedItem: any = positionItems[0].items[1];
-const defaultTitle = 'Fancy window';
+const defaultTitle = 'Fancy cristal window';
 const defaultChildren = '😎';
 
 export default class App extends Component<AppProps, AppState> {
   state: AppState = {
     title: defaultTitle,
     initialPosition: selectedItem,
-    isResizable: false,
+    isResizable: true,
+    isDraggable: true,
     isVisible: true,
     children: defaultChildren,
     cristals: [{
       children: defaultChildren,
-      title: defaultTitle,
+      title: defaultTitle
+    }, {
+      children: '🤔',
+      title: 'Fancy cristal window 2',
       initialPosition: 'bottom-left'
-    }]
+    }],
+    cristalStates: {}
   }
 
   onPositionChange = (e: any) => {
@@ -66,9 +76,10 @@ export default class App extends Component<AppProps, AppState> {
     });
   }
 
-  onMove = (state) => {
+  onMove = (state: CristalState) => {
+    const {cristalStates} = this.state;
+    cristalStates['1'] = state;
     // TODO: fancy render
-    // console.log('onMove', {state});
   }
 
   renderCristals = () => {
@@ -76,15 +87,13 @@ export default class App extends Component<AppProps, AppState> {
     if (!cristals.length) return;
 
     const content = cristals.map((cristal, index) => {
-      const {title, initialPosition, isResizable, children} = cristal;
+      const {children} = cristal;
       return (
         <Cristal
           key={index}
-          title={title}
-          initialPosition={initialPosition}
           onClose={this.removeCristal(index)}
-          isResizable={isResizable}
           onMove={this.onMove}
+          {...cristal}
         >
           <ComponentWrapper>
             {children}
@@ -97,11 +106,13 @@ export default class App extends Component<AppProps, AppState> {
   }
 
   createNewCristal = () => {
-    const {cristals, title, children, initialPosition} = this.state;
+    const {cristals, title, children, initialPosition, isResizable, isDraggable} = this.state;
 
     cristals.push({
       children,
       title,
+      isResizable,
+      isDraggable,
       initialPosition: initialPosition.value
     });
 
@@ -120,6 +131,11 @@ export default class App extends Component<AppProps, AppState> {
     this.setState({children});
   }
 
+  onCheckboxChange = (propName: StatePropName) => () => {
+    const currentValue = this.state[propName];
+    this.setState({ [propName]: !currentValue } as any);
+  }
+
   render() {
     const {title, children} = this.state;
 
@@ -133,16 +149,30 @@ export default class App extends Component<AppProps, AppState> {
           initialPosition="top-center"
         >
           <CristalCreatorWrapper>
-            <Select
-              label="Position"
-              items={positionItems}
-              defaultSelected={selectedItem}
-              onSelected={this.onPositionChange}
-              droplistShouldFitContainer={true}
-            />
-            <FieldText label="Title" value={title} onChange={this.onTitleChange} />
-            <FieldText label="Content" value={children} onChange={this.onChildrenChange} />
-            <Button appearance="primary" onClick={this.createNewCristal}>
+            <CritalOptions>
+              <Select
+                label="Position"
+                items={positionItems}
+                defaultSelected={selectedItem}
+                onSelected={this.onPositionChange}
+                droplistShouldFitContainer={true}
+              />
+              <FieldText label="Title" value={title} onChange={this.onTitleChange} />
+              <FieldText label="Content" value={children} onChange={this.onChildrenChange} />
+            </CritalOptions>
+            <CristalToggleOptions>
+              <Checkbox
+                initiallyChecked={true} 
+                label="Resizable" 
+                onChange={this.onCheckboxChange('isResizable')} 
+              />
+              <Checkbox
+                initiallyChecked={true} 
+                label="Draggable" 
+                onChange={this.onCheckboxChange('isDraggable')} 
+              />
+            </CristalToggleOptions>
+            <Button shouldFitContainer appearance="primary" onClick={this.createNewCristal}>
               Create
             </Button>
           </CristalCreatorWrapper>

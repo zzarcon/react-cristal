@@ -8,9 +8,10 @@
   "license": "MIT",
   "devDependencies": {
     "@atlaskit/button": "^8.2.4",
+    "@atlaskit/checkbox": "^4.0.0",
     "@atlaskit/field-text": "^6.1.2",
     "@atlaskit/single-select": "^5.2.4",
-    "ts-react-toolbox": "^0.1.12"
+    "ts-react-toolbox": "^0.1.15"
   },
   "peerDependencies": {
     "react": "^16.3.0",
