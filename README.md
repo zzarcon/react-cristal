@@ -53,6 +53,18 @@ import Cristal from 'react-cristal';
 </Cristal>
 ```
 
+# Using initial position
+
+```tsx
+// Smart positions
+<Cristal initialPosition="center" />
+<Cristal initialPosition="top-right" />
+<Cristal initialPosition="bottom-center" />
+
+// Custom coordinates
+<Cristal initialPosition={{x: 500, y: 100}} />
+```
+
 # Api 📚
 
 ```ts
