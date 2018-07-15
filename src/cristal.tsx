@@ -2,14 +2,14 @@ import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import {Component, ReactNode} from 'react';
 import {Wrapper, Header, BottomRightResizeHandle, RightResizeHandle, BottomResizeHandle, ContentWrapper, padding, CloseIcon, Title} from './styled';
-import { InitialPosition, Size } from './domain';
+import { InitialPosition, Size, Coords, isSmartPosition } from './domain';
 import { getCordsFromInitialPosition, getBoundaryCoords } from './utils';
 import { Stacker } from './stacker';
 
 export interface CristalProps {
   children: ReactNode;
   title?: string;
-  initialPosition?: InitialPosition;
+  initialPosition?: InitialPosition | Coords;
   initialSize?: Size;
   isResizable?: boolean;
   isDraggable?: boolean;
@@ -97,7 +97,14 @@ export class Cristal extends Component<CristalProps, CristalState> {
     const {initialPosition} = this.props;
     if (!initialPosition) return;
 
-    const cords = getCordsFromInitialPosition(initialPosition, size);
+    let cords;
+
+    if (isSmartPosition(initialPosition)) {
+      cords = getCordsFromInitialPosition(initialPosition, size);
+    } else {
+      cords = initialPosition;
+    }
+
     const {x, y} = getBoundaryCoords(cords, size);
 
     this.setState({x, y});

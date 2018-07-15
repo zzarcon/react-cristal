@@ -167,6 +167,10 @@ describe('<Cristal />', () => {
     it('should use "initialPosition" for the initial render', () => {
 
     });
+
+    it('should initially set the component into the right coords when initialPosition == Coords', () => {
+
+    });
   });
 
   describe.skip('drag', () => {

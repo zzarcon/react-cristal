@@ -10,3 +10,7 @@ export interface Size {
   width: number;
   height: number;
 }
+
+export const isSmartPosition = (position: InitialPosition | Coords): position is InitialPosition =>  {
+  return typeof position === 'string';
+}
