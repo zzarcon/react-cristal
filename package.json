@@ -1,6 +1,6 @@
 {
   "name": "react-cristal",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "Convert any component into a window",
   "main": "dist/index.js",
   "repository": "",
