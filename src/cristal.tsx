@@ -244,8 +244,9 @@ export class Cristal extends Component<CristalProps, CristalState> {
   }
 
   changeZIndex = () => {
+    const {zIndex} = this.state;
     this.setState({
-      zIndex: Stacker.getNextIndex()
+      zIndex: Stacker.getNextIndex(zIndex)
     });
   }
 

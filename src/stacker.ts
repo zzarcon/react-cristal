@@ -5,7 +5,11 @@ export class Stacker {
     
   }
   
-  static getNextIndex(): number {
+  static getNextIndex(index?: number): number {
+    if (index === Stacker.maxIndex) {
+      return index;
+    }
+
     Stacker.maxIndex++;
 
     return Stacker.maxIndex;
