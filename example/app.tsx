@@ -92,6 +92,8 @@ export default class App extends Component<AppProps, AppState> {
         <Cristal
           key={index}
           onClose={this.removeCristal(index)}
+          onMax={this.removeCristal(index)}
+          onMin={this.removeCristal(index)}
           onMove={this.onMove}
           {...cristal}
         >
