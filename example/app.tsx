@@ -69,22 +69,14 @@ export default class App extends Component<AppProps, AppState> {
 onMax = (ref:React.RefObject<Cristal>) => () => {
 	var cristal = ref.current;
   if (cristal!=null) {
-  	cristal.setState({width:window.innerWidth});
-  	cristal.setState({x:0});
-  	cristal.setState({y:0});
-  	cristal.setState({height:window.innerHeight});
+  	cristal.setState({width:window.innerWidth,x:0,y:0,height:window.innerHeight});
   }
-
 }
 onMin = (ref:React.RefObject<Cristal>) => () => {
 	var cristal = ref.current;
   if (cristal!=null) {
-  	cristal.setState({width:1});
-  	cristal.setState({x:-1});
-  	cristal.setState({y:-1});
-  	cristal.setState({height:1});
+  	cristal.setState({width:1, x:-1, y:-1, height:1});
   }
-
 }
   removeCristal = (index: number) => () => {
     const {cristals} = this.state;
