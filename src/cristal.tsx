@@ -1,7 +1,7 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import {Component, ReactNode} from 'react';
-import {Wrapper, Header, BottomRightResizeHandle, RightResizeHandle, BottomResizeHandle, ContentWrapper, padding, CloseIcon, Title} from './styled';
+import {Wrapper, Header, BottomRightResizeHandle, RightResizeHandle, BottomResizeHandle, ContentWrapper, padding, CloseIcon, MinimizeIcon, MaximizeIcon, Title, TitleBtns} from './styled';
 import { InitialPosition, Size, Coords, isSmartPosition } from './domain';
 import { getCordsFromInitialPosition, getBoundaryCoords } from './utils';
 import { Stacker } from './stacker';
@@ -14,6 +14,8 @@ export interface CristalProps {
   isResizable?: boolean;
   isDraggable?: boolean;
   onClose?: () => void;
+  onMax?: () => void;
+  onMin?: () => void;
   onMove?: (state: CristalState) => void;
   onResize?: (state: CristalState) => void;
   className?: string;
@@ -136,7 +138,7 @@ export class Cristal extends Component<CristalProps, CristalState> {
       const {x, y} = getBoundaryCoords({x: newX, y: newY}, size);
 
       this.setState({ x, y }, this.notifyMove);
-      
+
       return;
     }
 
@@ -152,9 +154,9 @@ export class Cristal extends Component<CristalProps, CristalState> {
 
       if (isResizingY) {
         const newHeight = (currentHeight || 0) + movementY;
-        const maxHeight = innerHeight - newY - padding;  
+        const maxHeight = innerHeight - newY - padding;
         const height = newHeight > maxHeight ? currentHeight : newHeight;
-      
+
         this.setState({height}, this.notifyResize);
       }
     }
@@ -208,7 +210,11 @@ export class Cristal extends Component<CristalProps, CristalState> {
     return (
       <Header isDraggable={isDraggable} innerRef={this.saveHeaderRef} onMouseDown={this.onMouseDown} >
         <Title>{title}</Title>
-        <CloseIcon onClick={onClose} />
+	       <TitleBtns>
+	         <MinimizeIcon onClick={onClose} />
+       		 <MaximizeIcon onClick={onClose} />
+	         <CloseIcon onClick={onClose} />
+	       </TitleBtns>
       </Header>
     );
   }
@@ -258,7 +264,7 @@ export class Cristal extends Component<CristalProps, CristalState> {
     const style = {
       left: x,
       top: y,
-      width, 
+      width,
       height,
       zIndex
     };

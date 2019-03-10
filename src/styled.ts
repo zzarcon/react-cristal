@@ -50,6 +50,7 @@ export const Header = styled.div`
   align-items: center;
   justify-content: space-between;
   padding-left: ${padding}px;
+
 `;
 
 export const BottomRightResizeHandle = styled.div`
@@ -63,6 +64,31 @@ export const BottomRightResizeHandle = styled.div`
 
 export const ContentWrapper = styled.div`
   padding: ${padding}px;
+`;
+
+export const MinimizeIcon = styled.div`
+  opacity: 0.3;
+  position: relative;
+  width: 15px;
+  height: 15px;
+  border-bottom: 2px solid #333;
+  cursor: pointer;
+  &:hover {
+    opacity: 1;
+  }
+
+`;
+export const MaximizeIcon = styled.div`
+  opacity: 0.3;
+  position: relative;
+  width: 15px;
+  height: 15px;
+  border: 2px solid #333;
+  cursor: pointer;
+  &:hover {
+    opacity: 1;
+  }
+
 `;
 
 export const CloseIcon = styled.div`
@@ -94,6 +120,12 @@ export const CloseIcon = styled.div`
   }
 `;
 
+export const TitleBtns = styled.div`
+  display:flex;
+  justify-content: space-between;
+  width:90px;
+`;
+
 export const Title = styled.div`
   white-space: nowrap;
   max-width: calc(100% - 25px);
@@ -102,7 +134,7 @@ export const Title = styled.div`
 `;
 
 export const RightResizeHandle = styled.div`
-  width: 20px;
+  width: 5px;
   height: calc(100% - 50px);
   position: absolute;
   bottom: 20px;
@@ -112,7 +144,7 @@ export const RightResizeHandle = styled.div`
 
 export const BottomResizeHandle = styled.div`
   width: calc(100% - 40px);
-  height: 20px;
+  height: 5px;
   position: absolute;
   bottom: 0;
   left: 20px;

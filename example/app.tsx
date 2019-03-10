@@ -9,7 +9,7 @@ import {ComponentWrapper, CristalCreatorWrapper, CritalOptions, CristalToggleOpt
 
 export interface AppProps {
 
-} 
+}
 
 export interface AppState {
   initialPosition: {value: InitialPosition};
@@ -66,6 +66,18 @@ export default class App extends Component<AppProps, AppState> {
     });
   }
 
+onMax = (ref:React.RefObject<Cristal>) => () => {
+	var cristal = ref.current;
+  if (cristal!=null) {
+  	cristal.setState({width:window.innerWidth,x:0,y:0,height:window.innerHeight});
+  }
+}
+onMin = (ref:React.RefObject<Cristal>) => () => {
+	var cristal = ref.current;
+  if (cristal!=null) {
+  	cristal.setState({width:1, x:-1, y:-1, height:1});
+  }
+}
   removeCristal = (index: number) => () => {
     const {cristals} = this.state;
 
@@ -82,23 +94,29 @@ export default class App extends Component<AppProps, AppState> {
     // TODO: fancy render
   }
 
+
   renderCristals = () => {
     const {cristals} = this.state;
     if (!cristals.length) return;
 
     const content = cristals.map((cristal, index) => {
       const {children} = cristal;
+      const cref = React.createRef<Cristal>();
+
       return (
         <Cristal
           key={index}
           onClose={this.removeCristal(index)}
+          onMin={this.onMin(cref)}
+          onMax={this.onMax(cref)}
           onMove={this.onMove}
+	         ref={cref}
           {...cristal}
         >
           <ComponentWrapper>
             {children}
-          </ComponentWrapper>          
-        </Cristal>  
+          </ComponentWrapper>
+        </Cristal>
       )
     });
 
@@ -121,13 +139,13 @@ export default class App extends Component<AppProps, AppState> {
 
   onTitleChange = (e: any) => {
     const title = e.target.value;
-    
+
     this.setState({title});
   }
 
   onChildrenChange = (e: any) => {
     const children = e.target.value;
-    
+
     this.setState({children});
   }
 
@@ -142,9 +160,9 @@ export default class App extends Component<AppProps, AppState> {
     return (
       <div>
         {this.renderCristals()}
-        <Cristal 
-          title="Create a new cristal window" 
-          isResizable={false} 
+        <Cristal
+          title="Create a new cristal window"
+          isResizable={false}
           isDraggable={false}
           initialPosition="top-center"
         >
@@ -162,14 +180,14 @@ export default class App extends Component<AppProps, AppState> {
             </CritalOptions>
             <CristalToggleOptions>
               <Checkbox
-                initiallyChecked={true} 
-                label="Resizable" 
-                onChange={this.onCheckboxChange('isResizable')} 
+                initiallyChecked={true}
+                label="Resizable"
+                onChange={this.onCheckboxChange('isResizable')}
               />
               <Checkbox
-                initiallyChecked={true} 
-                label="Draggable" 
-                onChange={this.onCheckboxChange('isDraggable')} 
+                initiallyChecked={true}
+                label="Draggable"
+                onChange={this.onCheckboxChange('isDraggable')}
               />
             </CristalToggleOptions>
             <Button shouldFitContainer appearance="primary" onClick={this.createNewCristal}>
